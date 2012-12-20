@@ -2,6 +2,8 @@ package com.example.tests;
 
 import org.testng.annotations.Test;
 
+import static com.example.fw.ContactHelper.CREATION;
+
 public class ContactCreationTests extends TestBase {
 
   @Test
@@ -20,9 +22,12 @@ public class ContactCreationTests extends TestBase {
     contact.birthDay = "1";
     contact.birthMonth = "January";
     contact.birthYear = "1970";
-    app.getNavigationHelper().openMainPage();
+    app.navigateTo().mainPage();
+
     app.getContactHelper().initContactCreation();
-    app.getContactHelper().fillContactForm(contact, true);
+
+    app.getContactHelper().fillContactForm(contact, CREATION);
+    
     app.getContactHelper().submitContactCreation();
     app.getContactHelper().returnToHomePage();
   }
