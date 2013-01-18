@@ -1,15 +1,18 @@
 package com.example.tests;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
+import java.util.Properties;
 
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 
 import com.example.fw.ApplicationManager;
+import static com.example.tests.GroupDataGenerator.generateRandomGroups;
 
 public class TestBase {
   
@@ -17,7 +20,10 @@ public class TestBase {
 
   @BeforeTest
   public void setUp() throws Exception {
-    app = new ApplicationManager();
+    String configFile = System.getProperty("configFile");
+    Properties properties = new Properties();
+    properties.load(new FileReader(new File(configFile)));
+    app = new ApplicationManager(properties);
   }
 
   @AfterTest
@@ -27,24 +33,14 @@ public class TestBase {
 
   @DataProvider
   public Iterator<Object[]> randomValidGroupGenerator() {
+    return wrapGroupsForDataProvider(generateRandomGroups(5)).iterator();
+  }
+  
+  public static List<Object[]> wrapGroupsForDataProvider(List<GroupData> groups) {
     List<Object[]> list = new ArrayList<Object[]>();
-    for (int i = 0; i < 5; i++) {
-      GroupData group = new GroupData()
-        .withName(generateRandomString())
-        .withHeader(generateRandomString())
-        .withFooter(generateRandomString());
+    for (GroupData group : groups) {
       list.add(new Object[]{group});
     }
-    return list.iterator();
+    return list;
   }
-  
-  public String generateRandomString() {
-    Random rnd = new Random();
-    if (rnd.nextInt(3) == 0) {
-      return "";
-    } else {
-      return "test" + rnd.nextInt();
-    }
-  }
-  
 }
